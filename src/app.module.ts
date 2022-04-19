@@ -1,10 +1,10 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { getConnectionOptions } from 'typeorm';
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { getConnectionOptions } from "typeorm";
+import { GraphQLModule } from "@nestjs/graphql";
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import * as entities from 'src/entities';
+import { AuthModule } from "./modules";
+import { ApolloDriver } from "@nestjs/apollo";
 
 @Module({
   imports: [
@@ -14,9 +14,13 @@ import * as entities from 'src/entities';
           autoLoadEntities: true,
         }),
     }),
-    TypeOrmModule.forFeature(Object.values(entities)),
+    GraphQLModule.forRoot({
+      driver: ApolloDriver,
+      autoSchemaFile: "schema.gql",
+      installSubscriptionHandlers: true,
+      
+    }),
+    AuthModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
